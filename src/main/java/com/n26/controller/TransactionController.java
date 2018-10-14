@@ -25,19 +25,22 @@ public class TransactionController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TransactionController.class);
 	private static final int duration = 60;
+	public static final String TRANSACTION_PATH = "/transactions";
 
 	@Autowired
 	private TrxAndStatService trxAndStatService;
 
-	@RequestMapping(value = "/transactions", method = RequestMethod.POST)
+	@RequestMapping(value = TRANSACTION_PATH, method = RequestMethod.POST)
 	public ResponseEntity<Void> transaction(@Valid @RequestBody Transaction transaction, HttpServletResponse response,
 			Errors errors) {
 
 		ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
 
 		if (transaction.getTimestamp() == null || transaction.getTimestamp().isBefore(now.minusSeconds(duration))) {
+			LOG.info("Transaction is more than 60 sec old");
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
+			LOG.info("Storing Transaction");
 			trxAndStatService.createTransaction(transaction);
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}

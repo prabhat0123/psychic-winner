@@ -15,10 +15,11 @@ import com.n26.service.TrxAndStatService;
 @RestController
 public class StatisticController {
 
+	public static final String STATISTICS_PATH = "/statistics";
 	@Autowired
 	private TrxAndStatService trxAndStatService;
 
-	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
+	@RequestMapping(value = STATISTICS_PATH, method = RequestMethod.GET)
 	public ResponseEntity<Statistic> statistics(HttpServletResponse response) {
 
 		return new ResponseEntity<Statistic>(trxAndStatService.getStatistics(), HttpStatus.OK);
