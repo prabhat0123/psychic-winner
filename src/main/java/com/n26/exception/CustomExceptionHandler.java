@@ -19,10 +19,9 @@ public class CustomExceptionHandler {
 	@ResponseBody
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
 	public void methodArgumentNotValidException(MethodArgumentNotValidException ex) {
-		System.out.println(ex);
+		// setting Http Status to UNPROCESSABLE_ENTITY
 	}
-
-	// @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+	
 	@ResponseBody
 	@ExceptionHandler({ HttpMessageNotReadableException.class })
 	public void httpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletResponse response) {

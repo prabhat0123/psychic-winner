@@ -24,7 +24,7 @@ import com.n26.service.TrxAndStatService;
 public class TransactionController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TransactionController.class);
-	private static final int duration = 60;
+	private static final int DURATION = 60;
 	public static final String TRANSACTION_PATH = "/transactions";
 
 	@Autowired
@@ -36,7 +36,7 @@ public class TransactionController {
 
 		ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
 
-		if (transaction.getTimestamp() == null || transaction.getTimestamp().isBefore(now.minusSeconds(duration))) {
+		if (transaction.getTimestamp() == null || transaction.getTimestamp().isBefore(now.minusSeconds(DURATION))) {
 			LOG.info("Transaction is more than 60 sec old");
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {

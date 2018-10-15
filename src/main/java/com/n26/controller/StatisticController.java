@@ -22,7 +22,7 @@ public class StatisticController {
 	@RequestMapping(value = STATISTICS_PATH, method = RequestMethod.GET)
 	public ResponseEntity<Statistic> statistics(HttpServletResponse response) {
 
-		return new ResponseEntity<Statistic>(trxAndStatService.getStatistics(), HttpStatus.OK);
+		return new ResponseEntity<>(trxAndStatService.getStatistics(), HttpStatus.OK);
 
 	}
 }

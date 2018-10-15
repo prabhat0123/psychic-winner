@@ -8,11 +8,13 @@ import java.util.stream.Collector;
 
 public class SummaryStatistics implements Consumer<BigDecimal> {
 
-	public static Collector<BigDecimal, ?, SummaryStatistics> statistics() {
+	public static Collector<BigDecimal, SummaryStatistics, SummaryStatistics> statistics() {
 		return Collector.of(SummaryStatistics::new, SummaryStatistics::accept, SummaryStatistics::merge);
 	}
 
-	private BigDecimal sum = BigDecimal.ZERO, min, max;
+	private BigDecimal sum = BigDecimal.ZERO;
+	private BigDecimal min;
+	private BigDecimal max;
 	private long count;
 
 	@Override
@@ -71,10 +73,5 @@ public class SummaryStatistics implements Consumer<BigDecimal> {
 
 	public BigDecimal getMax() {
 		return max.setScale(2, BigDecimal.ROUND_HALF_UP);
-	}
-
-	@Override
-	public String toString() {
-		return count == 0 ? "empty" : (count + " elements between " + min + " and " + max + ", sum=" + sum);
 	}
 }

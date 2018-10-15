@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -43,6 +44,8 @@ public class TrxAndStatServiceImpl implements TrxAndStatService {
 				transactionMap.put(transaction.getTimestamp(), amountList);
 			}
 		} finally {
+			Set<ZonedDateTime> oldKeySet = transactionMap.headMap(ZonedDateTime.now().minusMinutes(1)).keySet();
+			this.removeOldData(oldKeySet, true);
 			lock.unlock();
 		}
 
@@ -56,17 +59,19 @@ public class TrxAndStatServiceImpl implements TrxAndStatService {
 
 			ConcurrentNavigableMap<ZonedDateTime, List<BigDecimal>> recentTransactionMap = transactionMap
 					.tailMap(ZonedDateTime.now().minusMinutes(1));
-
+			
+			Set<ZonedDateTime> keySet = recentTransactionMap.keySet();
 			Collection<List<BigDecimal>> amountListCollection = recentTransactionMap.values();
-			List<BigDecimal> AmountCollect = amountListCollection.stream().collect(ArrayList::new, List::addAll,
+			
+			List<BigDecimal> amountCollect = amountListCollection.stream().collect(ArrayList::new, List::addAll,
 					List::addAll);
 
-			SummaryStatistics stats = AmountCollect.stream().collect(SummaryStatistics.statistics());
+			SummaryStatistics stats = amountCollect.stream().collect(SummaryStatistics.statistics());
 
 			result = new Statistic(stats.getSum().toString(),
 					stats.getAverage(new MathContext(5, RoundingMode.HALF_UP)).toString(), stats.getMax().toString(),
 					stats.getMin().toString(), stats.getCount());
-
+			this.removeOldData(keySet, false);
 		}
 		LOG.info("Stat Response : {} ", result);
 		return result;
@@ -75,6 +80,13 @@ public class TrxAndStatServiceImpl implements TrxAndStatService {
 	@Override
 	public void deleteTransaction() {
 		transactionMap.clear();
+	}
+
+	private void removeOldData(Set<ZonedDateTime> keySet, boolean flag) {
+		if (flag)
+			transactionMap.keySet().removeAll(keySet);
+		else
+			transactionMap.keySet().retainAll(keySet);
 	}
 
 }
