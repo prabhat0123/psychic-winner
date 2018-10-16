@@ -12,19 +12,25 @@ Specs
 POST /transactions
 This endpoint is called to create a new transaction. It MUST execute in constant time and memory (O(1)).
 Body:
-    {
+  ```ruby
+  {
         "amount": "12.3343",
         "timestamp": "2018-07-17T09:59:51.312Z"
-    }
+  }
+  ```
     
 Where:
+
     a.  amount – transaction amount; a string of arbitrary length that is parsable as a BigDecimal
-    b.  timestamp – transaction time in the ISO 8601 format YYYY-MM-DDThh:mm:ss.sssZ in the UTC timezone (this is not the current             timestamp)
+    b.  timestamp – transaction time in the ISO 8601 format YYYY-MM-DDThh:mm:ss.sssZ in the UTC timezone (this is not the        current timestamp)
+    
 Returns: Empty body with one of the following:
+
     201 – in case of success
     204 – if the transaction is older than 60 seconds
     400 – if the JSON is invalid
     422 – if any of the fields are not parsable or the transaction date is in the future
+    
 GET /statistics
 This endpoint returns the statistics based on the transactions that happened in the last 60 seconds. It MUST execute in constant time and memory (O(1)).
 
